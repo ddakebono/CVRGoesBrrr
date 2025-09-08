@@ -67,7 +67,7 @@ namespace CVRGoesBrrr
 
         public override void OnUpdate()
         {
-            if (PlayerSetup.Instance?.animatorManager != null)
+            if (PlayerSetup.Instance?.AnimatorManager != null)
             {
                 while (AdvancedAvatarParameters.Count > 0)
                 {
@@ -595,7 +595,7 @@ namespace CVRGoesBrrr
         private void CalculateHandTouchFeedback(HashSet<Sensor> activeSensors)
         {
             // Calculate and send touch feedback
-            if (!TouchFeedbackEnabled || PlayerSetup.Instance?._avatar == null) return;
+            if (!TouchFeedbackEnabled || PlayerSetup.Instance?.AvatarObject == null) return;
 
             foreach (var sensor in FeedbackSensors)
             {
@@ -620,7 +620,7 @@ namespace CVRGoesBrrr
 
                 float leftDistance = float.MaxValue;
                 float rightDistance = float.MaxValue;
-                Animator playerLocalAvatarAnimator = PlayerSetup.Instance._animator;
+                Animator playerLocalAvatarAnimator = PlayerSetup.Instance.Animator;
                 if (playerLocalAvatarAnimator != null)
                 {
                     var leftHand = playerLocalAvatarAnimator.GetBoneTransform(HumanBodyBones.LeftHand);

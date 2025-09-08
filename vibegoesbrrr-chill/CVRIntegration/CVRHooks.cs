@@ -6,6 +6,7 @@ using HarmonyLib;
 using System.Linq;
 using ABI_RC.Systems.InputManagement;
 using ABI_RC.Core;
+using ABI_RC.Core.Util;
 using ABI_RC.Systems.GameEventSystem;
 using ABI_RC.Systems.IK.SubSystems;
 
@@ -25,21 +26,20 @@ namespace CVRGoesBrrr.CVRIntegration
         public static void AddHooksIntoCVR(HarmonyLib.Harmony harmony)
         {
             //Use the CVRGameEventSystem for what we can
-            CVRGameEventSystem.Spawnable.OnInstantiate.AddListener(OnPropInstantiated);
-
-            harmony.Patch(typeof(BodySystem).GetMethod(nameof(BodySystem.InitializeAvatar), BindingFlags.Public | BindingFlags.Instance), postfix: new HarmonyMethod(typeof(CVRHooks).GetMethod(nameof(OnLocalAvatarLoad), BindingFlags.NonPublic | BindingFlags.Static)));
-            harmony.Patch(typeof(PuppetMaster).GetMethod(nameof(PuppetMaster.AvatarInstantiated), BindingFlags.Public | BindingFlags.Instance), postfix: new HarmonyMethod(typeof(CVRHooks).GetMethod(nameof(OnRemoteAvatarLoad), BindingFlags.NonPublic | BindingFlags.Static)));
+            CVRGameEventSystem.Spawnable.OnPropSpawned.AddListener(OnPropInstantiated);
+            CVRGameEventSystem.Avatar.OnLocalAvatarLoad.AddListener(OnLocalAvatarLoad);
+            CVRGameEventSystem.Avatar.OnRemoteAvatarLoad.AddListener(OnRemoteAvatarLoad);
         }
 
-        private static void OnPropInstantiated(string spawnedBy, CVRSpawnable propSpawnable)
+        private static void OnPropInstantiated(string spawnedBy, CVRSyncHelper.PropData propSpawnable)
         {
-            CVRAttachment[] attachments = propSpawnable.GetComponentsInChildren<CVRAttachment>();
+            CVRAttachment[] attachments = propSpawnable.Spawnable.GetComponentsInChildren<CVRAttachment>();
 
             if (attachments != null && attachments.Length > 0)
             {
                 foreach (var item in attachments)
                 {
-                    Util.DebugLog($"Attachable prop detected, adding events to CVRAttachment component! GUID: {propSpawnable.guid} | Name: {propSpawnable.name}");
+                    Util.DebugLog($"Attachable prop detected, adding events to CVRAttachment component! GUID: {propSpawnable.Spawnable.guid} | Name: {propSpawnable.Spawnable.name}");
 
                     item.onAttach.AddListener(() =>
                     {
@@ -53,14 +53,14 @@ namespace CVRGoesBrrr.CVRIntegration
                 }
             }
 
-            PropIsReady?.Invoke(propSpawnable);
+            PropIsReady?.Invoke(propSpawnable.Spawnable);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="__0"></param>
-        private static void OnLocalAvatarLoad()
+        private static void OnLocalAvatarLoad(CVRAvatar avatar)
         {
             Util.StartTimer("OnLocalAvatarLoad");
             LocalAvatarIsReady?.Invoke();
@@ -70,12 +70,10 @@ namespace CVRGoesBrrr.CVRIntegration
         /// 
         /// </summary>
         /// <param name="__instance"></param>
-        private static void OnRemoteAvatarLoad(PuppetMaster __instance)
+        private static void OnRemoteAvatarLoad(CVRPlayerEntity player, CVRAvatar avatar)
         {
-            Util.StartTimer("OnRemoteAvatarLoad");
-            var descriptor = __instance.GetPlayerDescriptor();
-            Util.DebugLog($"RemoteAvatarLoad fired - Username: {descriptor.userName} | Name: {__instance.avatarObject.name}");
-            RemoteAvatarIsReady.Invoke(__instance, descriptor);
+            Util.DebugLog($"RemoteAvatarLoad fired - Username: {player.Username} | Name: {avatar.name}");
+            RemoteAvatarIsReady.Invoke(player.PuppetMaster, player.PlayerDescriptor);
             Util.StopTimer("OnRemoteAvatarLoad", 10);
         }
 
@@ -94,11 +92,11 @@ namespace CVRGoesBrrr.CVRIntegration
         public static void SetAdvancedAvatarParameter(string parameterName, float intensityValue)
         {
             Util.DebugLog($"checking if Avatar parameter {parameterName} exists");
-            bool parameterExists = PlayerSetup.Instance.animatorManager.Parameters.Select((c)=>c.Value.name).Contains(parameterName);
+            bool parameterExists = PlayerSetup.Instance.AnimatorManager.Parameters.Select((c)=>c.Value.name).Contains(parameterName);
             if (parameterExists)
             {
                 Util.DebugLog($"setting Avatar parameter {parameterName} to {intensityValue}");
-                PlayerSetup.Instance.changeAnimatorParam(parameterName, intensityValue);
+                PlayerSetup.Instance.ChangeAnimatorParam(parameterName, intensityValue);
             }
         }
     }
