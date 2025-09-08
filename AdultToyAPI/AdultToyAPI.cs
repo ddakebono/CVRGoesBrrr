@@ -1,6 +1,5 @@
 ﻿using ABI_RC.Core.UI;
 using Buttplug.Client;
-using Buttplug.Client.Connectors.WebsocketConnector;
 using Buttplug.Core;
 using Buttplug.Core.Messages;
 using MelonLoader;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -21,6 +21,7 @@ using static Buttplug.Core.Messages.ScalarCmd;
 
 namespace AdultToyAPI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class AdultToyAPI : MelonMod, IAdultToyAPI
     {
         // Settings variables
@@ -303,7 +304,7 @@ namespace AdultToyAPI
                 Buttplug.DeviceAdded += OnButtplugDeviceAdded;
                 Buttplug.DeviceRemoved += OnButtplugDeviceRemoved;
                 Buttplug.ErrorReceived += OnButtplugErrorReceived;
-                ServerConnected.Invoke(null, new ServerConnectedEventArgs());
+                ServerConnected?.Invoke(null, new ServerConnectedEventArgs());
             }
             catch (Exception e)
             {
@@ -328,7 +329,7 @@ namespace AdultToyAPI
 
         private void OnButtplugErrorReceived(object sender, ButtplugExceptionEventArgs e)
         {
-            ErrorReceived.Invoke(sender, new ErrorEventArgs());
+            ErrorReceived?.Invoke(sender, new ErrorEventArgs());
         }
 
         private void OnButtplugDeviceRemoved(object sender, Buttplug.Client.DeviceRemovedEventArgs e)
@@ -347,7 +348,7 @@ namespace AdultToyAPI
             }
             DebugLog("Toy Lost, "+device.GetName()+", sad");
             CohtmlHud.Instance.ViewDropTextImmediate("Toy Lost", device.GetName(), string.Empty);
-            DeviceRemoved.Invoke(sender, new DeviceRemovedEventArgs(device));
+            DeviceRemoved?.Invoke(sender, new DeviceRemovedEventArgs(device));
         }
 
         private void OnButtplugDeviceAdded(object sender, Buttplug.Client.DeviceAddedEventArgs e)
@@ -369,13 +370,13 @@ namespace AdultToyAPI
             }
             DebugLog("Toy Detected, " + device.GetName() + ", Nice!");
             CohtmlHud.Instance.ViewDropTextImmediate("Toy Detected", device.GetName(), "Nice!");
-            DeviceAdded.Invoke(sender, new DeviceAddedEventArgs(device));
+            DeviceAdded?.Invoke(sender, new DeviceAddedEventArgs(device));
         }
 
         private void OnButtplugServerDisconnect(object sender, EventArgs e)
         {
             DebugLog("Server Disconnected");
-            ServerDisconnect.Invoke(sender, new ServerDisconnectEventArgs());
+            ServerDisconnect?.Invoke(sender, new ServerDisconnectEventArgs());
         }
 
         public bool IsConnected()
@@ -553,6 +554,7 @@ namespace AdultToyAPI
                     startInfo.WorkingDirectory = Environment.CurrentDirectory;
                     RemoveAllKnownDevices();
                     IntifaceProcess = Process.Start(startInfo);
+                    if (IntifaceProcess == null) return;
                     IntifaceProcess.EnableRaisingEvents = true;
                     IntifaceProcess.OutputDataReceived += (sender, args) => DebugLog(args.Data);
                     IntifaceProcess.ErrorDataReceived += (sender, args) => MelonLoader.MelonLogger.Error(args.Data);
