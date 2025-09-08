@@ -110,8 +110,6 @@ namespace CVRGoesBrrr
             ToyAPI.ServerDisconnect += ToyAPI_ServerDisconnect;
             ToyAPI.ServerConnected += ToyAPI_ServerConnected;
 
-            Binder.SetButtplugClient(ToyAPI);
-
             Util.Info($"CVRGoesBrrr is starting up! AdultToyAPI {adultToyAPI.Info.Version} is detected!");
 
             MelonPreferences.CreateCategory(BuildInfo.Name, "CVR Goes Brrr~");
@@ -156,6 +154,7 @@ namespace CVRGoesBrrr
             // mAudioProvider.SensorLost += OnSensorLost;
 
             Binder = new DeviceSensorBinder();
+            Binder.SetButtplugClient(ToyAPI);
             Binder.BindingAdded += OnBindingAdded;
             Binder.BindingRemoved += OnBindingRemoved;
             Binder.AddSensorProvider(SensorManager);
