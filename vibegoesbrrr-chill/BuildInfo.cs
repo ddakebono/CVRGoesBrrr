@@ -18,11 +18,11 @@ namespace CVRGoesBrrr
         /// <summary>
         /// Author of the Mod
         /// </summary>
-        public const string Author = "DarkPowers";
+        public const string Author = "DarkPowers, DDAkebono, and Kafe";
         /// <summary>
         /// Version of the Mod
         /// </summary>
-        public const string Version = "0.1.5-experimental";
+        public const string Version = "0.1.6-untested";
         /// <summary>
         /// Where to download new versions of the mod
         /// </summary>
