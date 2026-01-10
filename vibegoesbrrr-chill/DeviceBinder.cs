@@ -329,6 +329,21 @@ namespace CVRGoesBrrr
         static Dictionary<int, HumanBodyBones> GetBoneDictionary(Animator animator, Transform transform)
         {
             var boneIds = new Dictionary<int, HumanBodyBones>();
+
+            // Idk why it checks the animator from the sensor, and not from CVRAvatar
+            // I'm assuming there is a reason for this, so I'll only look if it's not a human animator (which is prob wrong most times)
+            // If if the animator is not human, we fall back to use the player's animator
+            if (!animator.isHuman)
+            {
+                Warning("The animator found was not Human, looking into the avatar's animator instead...");
+                var root = transform.root.GetComponentInChildren<CVRAvatar>(true);
+                if (root != null && root.Player != null && root.Player.Animator != null && root.Player.Animator.isHuman)
+                {
+                    Msg("Success! Found a Human animator on the avatar! Using that one instead");
+                    animator = root.Player.Animator;
+                }
+            }
+
             if (animator.isHuman)
             {
                 foreach (HumanBodyBones boneId in Enum.GetValues(typeof(HumanBodyBones)))
