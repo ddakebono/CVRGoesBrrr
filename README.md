@@ -1,3 +1,7 @@
+## NOTICE: This mod HAS NOT BEEN TESTED! I am simply maintaining this so that it starts and runs against the latest ChilloutVR versions, I do not actively work on this.
+### If you encounter issues feel free to let me know, but they may or may not get fixed.
+### If you want to contribute or take over maintenance, be my guest lol
+
 # CVRGoesBrrr
 Toy manager for CVR
 ## Adult Toy API
@@ -42,3 +46,6 @@ this is a mod to let you use your toys based on actions in CVR.\
 - Scan Wait Duration: (float) needs to be removed
 ## Recomendations
 I Highly recomend using an Intel Bluetooth 5.0 or better adapter. The Lovense dongle, while functional, has limitations. If you have a lovense dongle and want to use it then make use to set the update fequency to something low like 15 or lower. Additionaly you will want to set the DeviceCommandTimeInterval to something like 50-100 milliseconds. Using more aggressive settings may cause the dongle to timeout and lose connection.
+
+## Disclaimer
+CVRGoesBrrr and the AdultToyAPI mods are not made by or affiliated with ChilloutVR or the ChilloutVR Team. 
