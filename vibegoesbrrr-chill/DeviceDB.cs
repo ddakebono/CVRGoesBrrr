@@ -14,6 +14,8 @@ namespace CVRGoesBrrr
 {
     class DeviceDB
     {
+        public static readonly DeviceDB Instance = new();
+        
         private static string Endpoint = "https://iostindex.com/devices.json";
         private static TimeSpan CacheLifetime = new TimeSpan(1, 0, 0, 0); // 1 day
 
@@ -74,21 +76,13 @@ namespace CVRGoesBrrr
             }
         }
 
-        public DeviceDB()
-        {
-            if (FetchTask == null)
-            {
-                FetchTask = Fetch();
-            }
-        }
-
-        private async Task Fetch(bool forceCached = false)
+        internal async Task Fetch()
         {
             // Force using cached copy if cache is fresh
             try
             {
                 var cacheLastWrite = File.GetLastWriteTimeUtc(CachePath);
-                if (cacheLastWrite > DateTime.Now - CacheLifetime)
+                if (DateTime.UtcNow.Subtract(cacheLastWrite).TotalHours < CacheLifetime.TotalHours)
                 {
                     Util.Logger.Msg("Cached device list is new enough, loading devices...");
                     var json = File.ReadAllText(CachePath, Encoding.UTF8);
@@ -122,12 +116,8 @@ namespace CVRGoesBrrr
                     ProcessDeviceList(JsonConvert.DeserializeObject<List<IoSTDevice>>(json));
                     
                     // Cache DB to disk
-                    File.WriteAllText(CachePath, json);
-                    var cacheFile = File.Open(CachePath, FileMode.OpenOrCreate);
-                    var encoded = Encoding.UTF8.GetBytes(json);
-                    await cacheFile.WriteAsync(encoded, 0, encoded.Length);
-                    
-                     return;
+                    await File.WriteAllTextAsync(CachePath, json);
+                    return;
                 }
 
                 Util.Logger.Warning("Unable to reach IoSTIndex, using embedded device list. This may not have newer devices included!");
@@ -149,9 +139,7 @@ namespace CVRGoesBrrr
 
         private void ProcessDeviceList(List<IoSTDevice> devices)
         {
-            Util.Logger.Msg($"Raw devices {devices.Count}");
-            var unique = devices.AsValueEnumerable().DistinctBy(x => x.Device);
-            Util.Logger.Msg("Unique devices: " + unique.Count());
+            var unique = devices.AsValueEnumerable().DistinctBy(x => x.FullName);
             
             foreach (var device in unique)
             {

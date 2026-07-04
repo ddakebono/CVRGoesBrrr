@@ -111,6 +111,16 @@ namespace CVRGoesBrrr
             ToyAPI.ServerConnected += ToyAPI_ServerConnected;
 
             Util.Info($"CVRGoesBrrr is starting up! AdultToyAPI {adultToyAPI.Info.Version} is detected!");
+            
+            //Try to load DeviceDB
+            Task.Run(async () =>
+            { 
+                await DeviceDB.Instance.Fetch();
+            }).ContinueWith(t =>
+            {
+                if (!t.IsFaulted) return;
+                Util.Logger.Error("Error occured while loading DeviceDB!", t.Exception);
+            });
 
             MelonPreferences.CreateCategory(BuildInfo.Name, "CVR Goes Brrr~");
             MelonPreferences.CreateEntry(BuildInfo.Name, "Active", Active, "Active");

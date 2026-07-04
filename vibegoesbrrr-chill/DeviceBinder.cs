@@ -18,8 +18,7 @@ namespace CVRGoesBrrr
 
         public event EventHandler<(IAdultToy Device, Sensor Sensor, int? Feature)> BindingAdded;
         public event EventHandler<(IAdultToy Device, Sensor Sensor, int? Feature)> BindingRemoved;
-
-        static readonly DeviceDB mDB = new DeviceDB();
+        
         IAdultToyAPI ToyAPI;
         List<ISensorProvider> mSensorProviders = new List<ISensorProvider>();
 
@@ -199,7 +198,7 @@ namespace CVRGoesBrrr
                             HumanBodyBones[] validBoneParents = { HumanBodyBones.Spine, HumanBodyBones.Hips, HumanBodyBones.Chest, HumanBodyBones.UpperChest };
                             if (IsChildOfBoneType(sensor.GameObject.transform, validBoneParents))
                             {
-                                var iostDevice = mDB.FindDevice(device.GetName());
+                                var iostDevice = DeviceDB.Instance.FindDevice(device.GetName());
                                 if (iostDevice != null)
                                 {
                                     if(JustUseMyDevice)
@@ -228,7 +227,7 @@ namespace CVRGoesBrrr
                     else
                     {
                         // Allow "Giver", "Taker" and "Any" tags to override match by type
-                        var iostDevice = mDB.FindDevice(device.GetName());
+                        var iostDevice = DeviceDB.Instance.FindDevice(device.GetName());
                         if (iostDevice != null)
                         {
                             if(JustUseMyDevice || sensor.Tag == "Any")
