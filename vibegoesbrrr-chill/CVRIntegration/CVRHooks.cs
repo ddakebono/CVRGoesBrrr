@@ -1,14 +1,11 @@
 using System;
-using System.Reflection;
 using ABI.CCK.Components;
 using ABI_RC.Core.Player;
-using HarmonyLib;
 using System.Linq;
 using ABI_RC.Systems.InputManagement;
 using ABI_RC.Core;
-using ABI_RC.Core.Util;
+using ABI_RC.Core.PropManagement;
 using ABI_RC.Systems.GameEventSystem;
-using ABI_RC.Systems.IK.SubSystems;
 
 namespace CVRGoesBrrr.CVRIntegration
 {
@@ -31,7 +28,7 @@ namespace CVRGoesBrrr.CVRIntegration
             CVRGameEventSystem.Avatar.OnRemoteAvatarLoad.AddListener(OnRemoteAvatarLoad);
         }
 
-        private static void OnPropInstantiated(string spawnedBy, CVRSyncHelper.PropData propSpawnable)
+        private static void OnPropInstantiated(string spawnedBy, PropSoul propSpawnable)
         {
             CVRAttachment[] attachments = propSpawnable.Spawnable.GetComponentsInChildren<CVRAttachment>();
 
