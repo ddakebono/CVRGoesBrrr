@@ -59,9 +59,7 @@ namespace CVRGoesBrrr.CVRIntegration
         /// <param name="__0"></param>
         private static void OnLocalAvatarLoad(CVRAvatar avatar)
         {
-            Util.StartTimer("OnLocalAvatarLoad");
             LocalAvatarIsReady?.Invoke();
-            Util.StopTimer("OnLocalAvatarLoad", 10);
         }
         /// <summary>
         /// 
@@ -71,7 +69,6 @@ namespace CVRGoesBrrr.CVRIntegration
         {
             Util.DebugLog($"RemoteAvatarLoad fired - Username: {player.Username} | Name: {avatar.name}");
             RemoteAvatarIsReady.Invoke(player.PuppetMaster, player.PlayerDescriptor);
-            Util.StopTimer("OnRemoteAvatarLoad", 10);
         }
 
         /// <summary>

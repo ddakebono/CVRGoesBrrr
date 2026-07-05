@@ -197,13 +197,11 @@ namespace CVRGoesBrrr
 
         private void BackgroundProcessingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Util.StartTimer("Computation Time");
             if (Active)
             {
                 //This is background thread safe, no functions touch Unity objects
                 ProcessSensorsAndVibrateDevices();
             }
-            Util.StopTimer("Computation Time", 25);
         }
 
         private void ToyAPI_ServerConnected(object sender, ServerConnectedEventArgs e)
@@ -455,9 +453,7 @@ namespace CVRGoesBrrr
                 var activeSensors = new HashSet<Sensor>();
                 DriveDevices(activeSensors);
                 CalculateHandTouchFeedback(activeSensors);
-                Util.StartTimer("Disable Inactive Sensors");
                 DisableInactiveSensors(activeSensors);
-                Util.StopTimer("Disable Inactive Sensors", 3);
                 PreviousActiveSensors = activeSensors;
             }
             catch (Exception e)
@@ -769,7 +765,6 @@ namespace CVRGoesBrrr
             Active = MelonPreferences.GetEntryValue<bool>(BuildInfo.Name, "Active");
             bool setupMode = MelonPreferences.GetEntryValue<bool>(BuildInfo.Name, "SetupMode");
             Util.Debug = MelonPreferences.GetEntryValue<bool>(BuildInfo.Name, "Debug");
-            Util.DebugPerformance = MelonPreferences.GetEntryValue<bool>(BuildInfo.Name, "DebugPerformance");
             CreateBackgroundProcessingTimer();
             if (!SetupMode && setupMode)
             {

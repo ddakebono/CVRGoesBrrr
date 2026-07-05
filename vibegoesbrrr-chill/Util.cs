@@ -11,8 +11,6 @@ namespace CVRGoesBrrr
     {
         public static MelonLogger.Instance Logger;
         public static bool Debug;
-        public static bool DebugPerformance;
-        private static ConcurrentDictionary<string, DateTime> Timers = new ConcurrentDictionary<string, DateTime>();
         private static FieldInfo _getPlayerDescriptor = typeof(PuppetMaster).GetField("_playerDescriptor", BindingFlags.Instance | BindingFlags.NonPublic);
         public static void DebugLog(string message)
         {
@@ -69,26 +67,6 @@ namespace CVRGoesBrrr
         {
             var components = c.GetComponentsInParent<T>(inactive);
             return components.Length > 0 ? components[0] : default(T);
-        }
-
-        public static void StartTimer(string timerName)
-        {
-            Timers[timerName + "Start"] = DateTime.Now;
-        }
-        public static void StopTimer(string timerName, double warningThreshold)
-        {
-            DateTime stopTime = DateTime.Now;
-            DateTime startTime = Timers[timerName + "Start"];
-            TimeSpan duration = stopTime - startTime;
-            string durationMessage = "Timer " + timerName + $" ran for {duration.TotalMilliseconds} milliseconds";
-            if (duration.TotalMilliseconds > warningThreshold)
-            {
-                Util.Warn(durationMessage);
-            }
-            else if (DebugPerformance)
-            {
-                Util.DebugLog(durationMessage);
-            }
         }
     }
 }
