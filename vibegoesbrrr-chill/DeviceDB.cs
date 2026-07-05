@@ -28,7 +28,9 @@ namespace CVRGoesBrrr
         public static string[] GiverTypes = {
             "Cock Ring",
             "Onahole",
-            "Strap-on"
+            "Strap-on",
+            "Masturbator",
+            "Silicone Masturbator",
         };
 
         public static string[] TakerTypes = {
@@ -44,7 +46,11 @@ namespace CVRGoesBrrr
             "Butterfly",
             "Suction Vibrator",
             "Wand",
-            "Nipple Clamps"
+            "Nipple Clamps",
+            "Anal Beads",
+            "Bullet",
+            "Fucking Machine",
+            "Kegel Wedge",
         };
 
         public class IoSTDevice
